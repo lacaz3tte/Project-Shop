@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+            <title>Shop</title>
+            <meta charset="utf-8"/>
+
+            <link rel="stylesheet" href="./styles.css">
+    
+
+            <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+            <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+            <script crossorigin src="https://unpkg.com/history@5/umd/history.development.js"></script>
+
+            <script crossorigin src="https://unpkg.com/react-router@6/umd/react-router.development.js"></script>
+            <script crossorigin src="https://unpkg.com/react-router-dom@6/umd/react-router-dom.development.js"></script>
+
+            <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+            
+        </head>
+        <body>
+            <div id="app"></div>
+
+            <script type="text/babel">
+                const Router = ReactRouterDOM.BrowserRouter
+                const Route = ReactRouterDOM.Route
+                const Routes = ReactRouterDOM.Routes
+                const Link = ReactRouterDOM.Link
+
+                class Add extends React.Component{
+                    constructor(props){
+                        super(props)
+                        this.handleSubmit=this.handleSubmit.bind(this)
+                        this.state={
+                            company:'',
+                            model:'',
+                            OS:'',
+                            processor:'',
+                            screenResolution:''
+                        }
+                    }
+                    handleSubmit(e){
+                        e.preventDefault()
+                        alert('Data successfully added')
+                        fetch("api/phones", {
+                            method: "POST",
+                            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                company:this.state.company,
+                                model:this.state.model,
+                                OS:this.state.OS,
+                                processor:this.state.processor,
+                                screenResolution:this.state.screenResolution,
+                                purpose:'add'
+                            })
+                        })
+                        this.setState({company:'',model:'',OS:'',processor:'',screenResolution:''})
+                    }
+
+                    render(){
+                        return <form className='add'  onSubmit={this.handleSubmit}>
+                                    <h2>Add</h2>
+                                    <p>
+                                        <label>Company</label>
+                                        <input type='text' value={this.state.company} onChange={(e)=>this.setState({company:e.target.value})}></input>
+                                    
+                                        <label>Model</label>
+                                        <input type='text' value={this.state.model} onChange={(e)=>this.setState({model:e.target.value})}></input>
+                                    
+                                        <label>OS</label>
+                                        <input type='text' value={this.state.OS} onChange={(e)=>this.setState({OS:e.target.value})}></input>
+                                    
+                                        <label>Processor</label>
+                                        <input type='text' value={this.state.processor} onChange={(e)=>this.setState({processor:e.target.value})}></input>
+                                    
+                                        <label>Screen Resolution</label>
+                                        <input type='text' value={this.state.screenResolution} onChange={(e)=>this.setState({screenResolution:e.target.value})}></input>
+                                    </p>
+                                    <input type='submit' value='Add'/>
+                                </form>
+                    }
+                }
+
+                class Search extends React.Component{
+                    constructor(props){
+                        super(props)
+                        this.state={
+                            phones:[],
+                            company:'',
+                            model:'',
+                            OS:'',
+                            processor:'',
+                            screenResolution:'',
+                            filtredPhones:'',
+                            purpose:'add'
+                        }
+                        this.handleSubmit=this.handleSubmit.bind(this)
+                        this.filterPhones=this.filterPhones.bind(this)
+                    }
+
+                    filterPhones(phones){
+                        let filtredCompany
+                        let filtredModel
+                        let filtredOS
+                        let filtredProcessor
+                        let filtredScreenResolution
+
+                        if(this.state.company!==''){
+                            filtredCompany = phones.filter(e=>e.company==this.state.company)
+                        }
+                        else{
+                            filtredCompany = phones
+                        }
+                        if(this.state.model!==''){
+                            filtredModel = filtredCompany.filter(e=>e.model==this.state.model)
+                        }
+                        else{
+                            filtredModel = filtredCompany
+                        }
+                        if(this.state.OS!==''){
+                            filtredOS = filtredModel.filter(e=>e.OS==this.state.OS)
+                        }
+                        else{
+                            filtredOS = filtredModel
+                        }
+                        if(this.state.processor!==''){
+                            filtredProcessor = filtredOS.filter(e=>e.processor==this.state.processor)
+                        }
+                        else{
+                            filtredProcessor = filtredOS
+                        }
+                        if(this.state.screenResolution!==''){
+                            filtredScreenResolution = filtredProcessor.filter(e=>e.screenResolution==this.state.screenResolution)
+                        }
+                        else{
+                            filtredScreenResolution = filtredProcessor
+                        }
+                        return filtredScreenResolution
+                    }
+
+                    handleSubmit(e){
+                        let filtredPhones
+                        e.preventDefault()
+                        fetch("api/phones", {
+                            method: "POST",
+                            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                company:this.state.company,
+                                model:this.state.model,
+                                OS:this.state.OS,
+                                processor:this.state.processor,
+                                screenResolution:this.state.screenResolution,
+                                purpose:'search'
+                            })
+                            
+                        })
+                        .then(res=>res.json())
+                        .then(result=>{
+                            filtredPhones = result
+                        })
+                        .then(result=>
+                        ReactDOM.render(
+                            <table>
+                                <thead>
+                                    <tr><td>Company</td><td>Model</td><td>OS</td><td>Processor</td><td>Scr. Resolution</td></tr>
+                                </thead>
+                                <tbody>
+                                    {filtredPhones.map((phone, index) => (
+                                            <tr key={index}>
+                                                <td>{phone.company}</td><td>{phone.model}</td><td>{phone.OS}</td><td>{phone.processor}</td><td>{phone.screenResolution}</td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>,
+                            document.getElementById('app2')
+                            
+                        ))
+                    }
+
+                    render(){
+                        return <div>
+                                    <form className='search' onSubmit={this.handleSubmit}>
+                                        <h2>Search</h2>
+                                        <p>
+                                            <label>Company</label>
+                                            <input type='text' value={this.state.company} onChange={(e)=>this.setState({company:e.target.value})}></input>
+                                        
+                                            <label>Model</label>
+                                            <input type='text' value={this.state.model} onChange={(e)=>this.setState({model:e.target.value})}></input>
+                                        
+                                            <label>OS</label>
+                                            <input type='text' value={this.state.OS} onChange={(e)=>this.setState({OS:e.target.value})}></input>
+                                        
+                                            <label>Processor</label>
+                                            <input type='text' value={this.state.processor} onChange={(e)=>this.setState({processor:e.target.value})}></input>
+                                        
+                                            <label>Screen Resolution</label>
+                                            <input type='text' value={this.state.screenResolution} onChange={(e)=>this.setState({screenResolution:e.target.value})}></input>
+                                        </p>
+                                        <input type='submit' value='Search'/>
+                                    </form>
+                                    <div id="app2"></div>
+                                </div>
+                    }
+                }
+
+                class Nav extends React.Component{
+                    render(){
+                        return  <nav>
+                                    <Link to="/">Add</Link>
+                                    <Link to="/search">Search</Link>
+                                </nav>
+                    }
+                }
+
+                ReactDOM.render(
+                    <Router>
+                        <div>
+                            <Nav />
+                            <Routes>
+                                <Route path='/' element={<Add />}/>
+                                <Route path='/search' element={<Search />}/>
+                            </Routes>
+                        </div>
+                    </Router>,
+                    document.getElementById('app')
+                )
+            </script>
+        </body>
+    </html>
