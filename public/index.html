@@ -95,47 +95,6 @@
                             purpose:'add'
                         }
                         this.handleSubmit=this.handleSubmit.bind(this)
-                        this.filterPhones=this.filterPhones.bind(this)
-                    }
-
-                    filterPhones(phones){
-                        let filtredCompany
-                        let filtredModel
-                        let filtredOS
-                        let filtredProcessor
-                        let filtredScreenResolution
-
-                        if(this.state.company!==''){
-                            filtredCompany = phones.filter(e=>e.company==this.state.company)
-                        }
-                        else{
-                            filtredCompany = phones
-                        }
-                        if(this.state.model!==''){
-                            filtredModel = filtredCompany.filter(e=>e.model==this.state.model)
-                        }
-                        else{
-                            filtredModel = filtredCompany
-                        }
-                        if(this.state.OS!==''){
-                            filtredOS = filtredModel.filter(e=>e.OS==this.state.OS)
-                        }
-                        else{
-                            filtredOS = filtredModel
-                        }
-                        if(this.state.processor!==''){
-                            filtredProcessor = filtredOS.filter(e=>e.processor==this.state.processor)
-                        }
-                        else{
-                            filtredProcessor = filtredOS
-                        }
-                        if(this.state.screenResolution!==''){
-                            filtredScreenResolution = filtredProcessor.filter(e=>e.screenResolution==this.state.screenResolution)
-                        }
-                        else{
-                            filtredScreenResolution = filtredProcessor
-                        }
-                        return filtredScreenResolution
                     }
 
                     handleSubmit(e){
