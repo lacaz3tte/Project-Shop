@@ -1,7 +1,6 @@
 
 const express = require("express")
 const MongoClient = require("mongodb").MongoClient
-const objectId = require("mongodb").ObjectId
    
 const app = express()
 const jsonParser = express.json()
